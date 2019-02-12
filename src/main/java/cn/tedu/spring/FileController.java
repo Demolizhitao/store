@@ -4,10 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
@@ -17,10 +20,28 @@ public class FileController {
     CommonsMultipartResolver cmr;
     
     @RequestMapping(value="upload.do",method=RequestMethod.POST)
+    @ResponseBody
     public String handleUpload(
-            @RequestParam("file") MultipartFile file) throws IllegalStateException, IOException{
-        //上传文件夹
-        File parent = new File("d:/");
+            HttpServletRequest request,
+            @RequestParam("file") MultipartFile file) 
+                    throws IllegalStateException, IOException{
+        String path = request.getServletContext().getRealPath("upload");
+        //检查上传的文件是否为空
+        if(file.isEmpty()){
+           return "empty"; 
+        }
+        //获取文件类型
+        String type = file.getContentType();
+        System.out.println(type);
+        //获取文件大小
+        Long size = file.getSize();
+        System.out.println(size);
+        
+        //上传文件夹 
+        File parent = new File(path);
+        if(!parent.exists()){
+            parent.mkdirs();
+        }
         
         //上传的文件名
        String originalFilename = 
