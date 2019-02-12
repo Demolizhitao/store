@@ -21,18 +21,22 @@ public class FileController {
     
     @RequestMapping(value="upload.do",method=RequestMethod.POST)
     @ResponseBody
-    public String handleUpload(
+    public JsonResult handleUpload(
             HttpServletRequest request,
             @RequestParam("file") MultipartFile file) 
                     throws IllegalStateException, IOException{
         String path = request.getServletContext().getRealPath("upload");
         //检查上传的文件是否为空
-        if(file.isEmpty()){
-           return "empty"; 
-        }
+//        if(file.isEmpty()){
+//          
+//        }
         //获取文件类型
-        String type = file.getContentType();
-        System.out.println(type);
+        String contentType = file.getContentType();
+        //限制文件上传类型
+//        if("image/png".equals(contentType)){
+//            
+//        }
+        System.out.println(contentType);
         //获取文件大小
         Long size = file.getSize();
         System.out.println(size);
@@ -60,6 +64,6 @@ public class FileController {
         //保存用户上传的文件
         File dest = new File(parent,child);
         file.transferTo(dest);
-        return "OK";
+        return new JsonResult(200); 
     }
 }
